@@ -23,6 +23,7 @@ class AbaqusIO:public MeshIO
 public:
     AbaqusIO(std::string szFile,Domain* domain);
     void read();
+    void read_excel();
 
     //TEST FUNCTIONS
     std::map<Index,std::vector<double> > Nodes() {return m_nodemap;}
@@ -41,6 +42,7 @@ private:
 
 
     std::fstream    m_file;
+    std::string prefix_file_name;
     Domain*         m_domain;
     NodeMap m_nodemap;
     ElementMap m_elementmap;

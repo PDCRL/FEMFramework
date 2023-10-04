@@ -24,7 +24,7 @@ ObjectiveFunction::ObjectiveFunction(Domain *domain,
 
 }
 
-Oceane::Vector ObjectiveFunction::
+Oceane::Vector ObjectiveFunction::e
 getDofVector(std::vector<Oceane::Index> indices, const double *x)
 {
     Oceane::Vector dofs;

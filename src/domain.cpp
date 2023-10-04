@@ -203,3 +203,14 @@ void Domain::Print()
 
 
 } //namespace Oceane
+
+extern "C" {
+    using namespace Oceane;
+    Domain* Domain_py() {
+        return new Domain();
+    }
+    //void Geek_myFunction(Geek* geek){ geek -> myFunction(); }
+    void add_Nodeptr(Domain* domain, Nodeptr node) {
+        domain->add_Nodeptr(node);
+    }
+}

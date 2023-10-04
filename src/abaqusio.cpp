@@ -6,11 +6,52 @@ namespace Oceane {
 
 
 AbaqusIO::AbaqusIO(std::string szFile,Domain* domain) :m_domain(domain) {
-    m_file.open(szFile,std::ios::in);
-    std::cout<<szFile<<"\tOpened Successfully\n";
-    if(!m_file)
-    std::cout<<"Coudn't open the file\n";
-    this->read();
+    std::string lastThree = szFile.substr(szFile.length() - 3);
+    if(lastThree == "inp") {
+        m_file.open(szFile,std::ios::in);
+        std::cout<<szFile<<"\tOpened Successfully\n";
+        if(!m_file)
+            std::cout<<"Coudn't open the file\n";
+        this->read();
+    }
+    if (lastThree == "lsx") {
+        prefix_file_name = szFile.substr(0, szFile.length() - 4);
+        this->read_excel();
+    }
+}
+
+void AbaqusIO::read_excel()
+{
+    // NodeMap m_nodemap;
+    std::ifstream inpFile(prefix_file_name + "_node_data.csv");
+    if (inpFile.is_open()) {
+        std::cout << "File opened successfully" << std::endl;
+    }
+
+    int nodeId;
+    double x, y;
+
+    std::string nodeId_s, x_s, y_s;
+
+    std::string first_line;
+    getline(inpFile, first_line); // skip the first line
+    while (getline(inpFile, first_line)) {
+        getline(inpFile, nodeId_s, ',');
+        getline(inpFile, x_s, ',');
+        getline(inpFile, y_s);
+
+        nodeId = stoi(nodeId_s);
+        x = stod(x_s);
+        y = stod(y_s);
+
+        m_nodemap[nodeId] = std::vector<double>{x,y};
+    }
+    // ElementMap m_elementmap;
+    // ElsetMap  m_elsetmap;
+    // NsetMap   m_nsetmap;
+    // LoadVec   m_loads;
+    // FixityVec m_fixity;
+
 }
 
 void AbaqusIO::read()
@@ -60,9 +101,6 @@ void AbaqusIO::read()
         m_domain->Init();
         std::cout<<"Domain Initiated\n";
 }
-
-
-
 
 void AbaqusIO:: readElements(std::string upper)
 {
