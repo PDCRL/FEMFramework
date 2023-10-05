@@ -14,13 +14,13 @@ AbaqusIO::AbaqusIO(std::string szFile,Domain* domain) :m_domain(domain) {
             std::cout<<"Coudn't open the file\n";
         this->read();
     }
-    if (lastThree == "lsx") {
+    if (lastThree == "csv") {
         prefix_file_name = szFile.substr(0, szFile.length() - 4);
-        this->read_excel();
+        this->read_csv();
     }
 }
 
-void AbaqusIO::read_excel()
+void AbaqusIO::read_csv()
 {
     // NodeMap m_nodemap;
     std::ifstream inpFile(prefix_file_name + "_node_data.csv");
@@ -28,7 +28,7 @@ void AbaqusIO::read_excel()
         std::cout << "File opened successfully" << std::endl;
     }
 
-    int nodeId;
+    Index nodeId;
     double x, y;
 
     std::string nodeId_s, x_s, y_s;
@@ -40,17 +40,127 @@ void AbaqusIO::read_excel()
         getline(inpFile, x_s, ',');
         getline(inpFile, y_s);
 
-        nodeId = stoi(nodeId_s);
+        nodeId = (Index)stoi(nodeId_s);
         x = stod(x_s);
         y = stod(y_s);
 
         m_nodemap[nodeId] = std::vector<double>{x,y};
     }
-    // ElementMap m_elementmap;
-    // ElsetMap  m_elsetmap;
-    // NsetMap   m_nsetmap;
-    // LoadVec   m_loads;
-    // FixityVec m_fixity;
+
+    // ElementMap m_elementmap; only 2 nodes per member 
+    std::ifstream inpFile(prefix_file_name + "_member_data.csv");
+    if (inpFile.is_open()) {
+        std::cout << "File opened successfully" << std::endl;
+    }
+
+    Index nodeId, m1, m2;
+    double area, matparam1, matparam2, matparam3, matparam4;
+    std::map<Index,std::vector<Index> > elements;
+
+    std::string material, nodeId_s, m1_s, m2_s, area_s, matparam1_s, matparam2_s, matparam3_s, matparam4_s;
+
+    std::string first_line;
+    getline(inpFile, first_line); // skip the first line
+    while (getline(inpFile, first_line)) {
+        getline(inpFile, material, ',');
+        getline(inpFile, nodeId_s, ',');
+        getline(inpFile, m1_s, ',');
+        getline(inpFile, m2_s, ',');
+        getline(inpFile, area_s, ',');
+        getline(inpFile, matparam1_s, ',');
+        getline(inpFile, matparam2_s, ',');
+        getline(inpFile, matparam3_s, ',');
+        getline(inpFile, matparam4_s);
+
+        nodeId = (Index)stoi(nodeId_s);
+        m1 = (Index) stoi(m1_s);
+        m2 = (Index) stoi(m2_s);
+
+        elements[nodeId] = std::vector<Index> {m1, m2};
+        m_elementmap["ELEMENT"] = elements;
+    }
+
+    // material = "model" as per the example
+    area = stod(area_s);
+    matparam1 = stod(matparam1_s);
+    matparam2 = stod(matparam2_s);
+    matparam3 = stod(matparam3_s);
+    matparam4 = stod(matparam4_s);
+
+    // LoadCsv   m_loads_csv; Might need to change the naming convention
+    std::ifstream inpFile(prefix_file_name + "_force_data.csv");
+    if (inpFile.is_open()) {
+        std::cout << "File opened successfully" << std::endl;
+    }
+
+    Index forceId;
+    double x, y;
+
+    std::string forceId_s, Fx, Fy;
+
+    std::string first_line;
+    getline(inpFile, first_line); // skip the first line
+    while (getline(inpFile, first_line)) {
+        getline(inpFile, forceId_s, ',');
+        getline(inpFile, Fx, ',');
+        getline(inpFile, Fy);
+
+        forceId = (Index) stoi(forceId_s);
+        x = stod(Fx);
+        y = stod(Fy);
+
+        m_loads_csv[forceId] = std::vector<double>{x,y};
+    }
+
+    // FixityCsv m_fixity_csv;
+    std::ifstream inpFile(prefix_file_name + "_support.csv");
+    if (inpFile.is_open()) {
+        std::cout << "File opened successfully" << std::endl;
+    }
+
+    Index fixityId;
+    double x, y;
+
+    std::string fixityId_s, ux, uy;
+
+    std::string first_line;
+    getline(inpFile, first_line); // skip the first line
+    while (getline(inpFile, first_line)) {
+        getline(inpFile, fixityId_s, ',');
+        getline(inpFile, ux, ',');
+        getline(inpFile, uy);
+
+        fixityId = (Index) stoi(fixityId_s);
+        x = stod(ux);
+        y = stod(uy);
+
+        m_fixity_csv[fixityId] = std::vector<double>{x,y};
+    }
+
+    // BoundCondn m_bcmap;
+    std::ifstream inpFile(prefix_file_name + "_boundary_conditions.csv");
+    if (inpFile.is_open()) {
+        std::cout << "File opened successfully" << std::endl;
+    }
+
+    Index bcId;
+    double x, y;
+
+    std::string bcId_s, ux, uy;
+
+    std::string first_line;
+    getline(inpFile, first_line); // skip the first line
+    while (getline(inpFile, first_line)) {
+        getline(inpFile, bcId_s, ',');
+        getline(inpFile, ux, ',');
+        getline(inpFile, uy);
+
+        bcId = (Index) stoi(bcId_s);
+        x = stod(ux);
+        y = stod(uy);
+
+        m_bcmap[bcId] = std::vector<double>{x,y};
+    }
 
 }
 

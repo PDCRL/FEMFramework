@@ -16,14 +16,16 @@ using NsetMap = std::map<std::string,std::vector<Index> >;
 using ElsetMap = std::map<std::string,std::vector<Index> >;
 using LoadVec = std::vector<Load>;
 using FixityVec = std::vector<Fixity>;
-
+using LoadCsv = std::map<Index, std::vector<double>>;
+using FixityCsv = std::map<Index, std::vector<double>>;
+using BoundCondn = std::map<Index, std::vector<double>>;
 
 class AbaqusIO:public MeshIO
 {
 public:
     AbaqusIO(std::string szFile,Domain* domain);
     void read();
-    void read_excel();
+    void read_csv();
 
     //TEST FUNCTIONS
     std::map<Index,std::vector<double> > Nodes() {return m_nodemap;}
@@ -50,6 +52,9 @@ private:
     NsetMap   m_nsetmap;
     LoadVec   m_loads;
     FixityVec m_fixity;
+    LoadCsv m_loads_csv;
+    FixityCsv m_fixity_csv;
+    BoundCondn m_bcmap;
 };
 
 } // namespace Oceane
