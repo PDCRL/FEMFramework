@@ -49,6 +49,7 @@ public:
     const Elementptr getElementptr(Index id) const ;
     const std::vector<Nodeptr> getNodes_at(std::vector<Index> ids) const;
     const constitutiveFnPtr getConstitutiveFunction() const;
+    void process();
 
 
     void Init();
@@ -56,6 +57,11 @@ public:
     void printNodes();
     void Print();
 
+    virtual void read() = 0;
+    virtual void init_variables() = 0;
+    virtual void solve() = 0;
+    virtual void display() = 0;
+    void process(Domain * obj);
 private:
     std::vector<Nodeptr> m_nodes;
     std::vector<Elementptr> m_elements;

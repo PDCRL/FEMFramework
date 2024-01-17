@@ -19,6 +19,7 @@ using FixityVec = std::vector<Fixity>;
 using LoadCsv = std::map<Index, std::vector<double>>;
 using FixityCsv = std::map<Index, std::vector<double>>;
 using BoundCondn = std::map<Index, std::vector<double>>;
+using Area = std::map<Index, double>;
 
 class AbaqusIO:public MeshIO
 {
@@ -26,6 +27,8 @@ public:
     AbaqusIO(std::string szFile,Domain* domain);
     void read();
     void read_csv();
+    std::vector<double> getMatrixA();
+    std::vector<double> getMatrixF();
 
     //TEST FUNCTIONS
     std::map<Index,std::vector<double> > Nodes() {return m_nodemap;}
@@ -55,6 +58,7 @@ private:
     LoadCsv m_loads_csv;
     FixityCsv m_fixity_csv;
     BoundCondn m_bcmap;
+    Area m_area;
 };
 
 } // namespace Oceane
