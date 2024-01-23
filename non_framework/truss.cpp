@@ -12,9 +12,11 @@ temp1, temp2, temp3, temp4, temp5, temp6
 
 //SteelModel and Model haven't been written since they haven't been used in the python code
 
-vector<vector<vector<double>>> Constiturel(vector<double> L, vector<double> A, vector<vector<string>> funcname, vector<vector<double>> member, int nmemb, vector<vector<int>> forcememb){
+vector<vector<vector<double>>> Constiturel(vector<double> L, vector<double> A, vector<vector<string>> funcname, vector<vector<double>> member, int nmemb, vector<vector<int>> forcememb)
+{
     vector<vector<double>> fdiff, strain, delta;
-    for(int i = 0; i < nmemb; i++){
+    for(int i = 0; i < nmemb; i++)
+    {
         vector<int> temp;
         temp.push_back(0);
         fdiff.push_back(temp);
@@ -22,23 +24,36 @@ vector<vector<vector<double>>> Constiturel(vector<double> L, vector<double> A, v
         delta.push_back(temp);
     }
 
-    for(int i = 0; i < nmemb; i++){
-        double sigma = (forcememb[i][0]*1)/A[i];
-        vector<int> K1, K2;
-        K1.push_back(sigma);
-        K2.push_back(pow(sigma, 2));
+    for(int i = 0; i < nmemb; i++)
+    {
+        vector<double> sigma = (forcememb[i][0]*1)/A[i];
+        vector<double> K1, K2;
+        K1=sigma;
+        K2.push_back(sigma[0]*sigma[0]);
         string temp = funcname[i+1][0];
         vector<string> namestr;
         int space;
-        for(int i = 0; i < temp.size(), i++){
-            if(int(temp[i]) == 32){
+        for(int i = 0; i < temp.size(), i++)
+        {
+            if(int(temp[i]) == 32)
+            {
                 space = i;
                 break;
             }
         }
         namestr.push_back(temp.substr(0, space));
         namestr.push_back(temp.substr(space + 1, temp.size() - space));
+
+        vector<vector<double>> beta,dbeta;
+
+        strain[i]=beta[0]+beta[1]*K1[0]+beta[2]*K2[0];
+        delta[i]=strain[i]*L[i];
+        fdiff[i]=(dbeta[0][0]+dbeta[0][1]*2*K1[0]+dbeta[1][0]*K1[0]+dbeta[1][1]*2*K2[0]+beta[1]+dbeta[2][0]*K2[0]+dbeta[2][1]*2*k1[0]*K2[0]+2*beta[2]*K1[0])*L[i]/A[i];
     }
+    vector<vector<vector<double>>> v;
+    v.push_back(delta);
+    v.push_back(fdiff);
+    return v;
 }
 
 vector<vector<double>> dot(vector<vector<double>> a, vector<vector<double>> b){
@@ -486,7 +501,7 @@ int main(){
     void nlopt::opt::set_maxeval(2000);
     vector<double> d, Fr;
     //optimize
-    double fval = nlopt::opt::last_optimum_value() const;
+    double fval::nlopt::opt::last_optimum_value() const;
 
     for(int i = nmemb+2*nnode-ns; i < d.size(), i++){
         Fr.push_back(d[i]);
@@ -497,18 +512,59 @@ int main(){
     for(int i = 0; i < nmemb; i++){
         //elementptr datatype?
     }
+    vector<int> xyzs, nodenumber;
+    for(int i = 0; i < bc.size(); i++){
+        for(int j = 1; j < 3; j++){
+            if(bc[i][j] == 1){
+                xyz.push_back(i);
+                nodenumber.push_back(j);
+            }
+        }
+    }
+    double k = 0.0;
+    string c;
+    cout << '______________________________________________' << endl << 'Node Displacements' << endl << ' ' << endl;
+    for(int i = nmemb; i < nmemb + sb[0]; i++){
+        if (nodenumber[i] == 0){
+            c = 'x';
+        }
+        elif (nodenumber[i] == 0){
+            c = 'y';
+        }
+
+        cout << 'u' << c << xyzs[k] + 1 << ' = ' << d[i]/multiplier << endl;
+        k += 1
+    }
+    cout << '______________________________________________' << endl << 'Support Reactions' << endl << ' ' << endl;
+    for(int i = 0; i < sz[0]; i++){
+        if (nodenumber[i] == 0){
+            c = 'x';
+        }
+        elif (nodenumber[i] == 0){
+            c = 'y';
+        }
+
+        k = round(Fr[i] * 1e6)/1e6;
+
+        cout << 'F' << c << xyzs[k] + 1 << ' = ' << k << endl;
+        k += 1
+    }
+
+
 }
 
 
 /*
 -> Constiturel: Almost done, ending needs to be added
--> Model, SteelModel
--> Check the functioning of dot(MatMul)
--> Objectfunc: grad[i] needs to be done ......DONE
+-> Model, SteelModel...........................................................................NOT NEEDED
+-> Check the functioning of dot(MatMul)........................................................DONE
+-> Objectfunc: grad[i] needs to be done .......................................................DONE
 -> getMatrixA and getMatrixF: Needs to be visited again
--> NLOpt: Need to check the functioning and documentation(Vamsi is working on it)
+-> NLOpt: Need to check the functioning and documentation(Vamsi is working on it)..............DONE
 -> NLOpt: opt.optimize is remaining
--> Printing of the output
+-> Printing of the output .....................................................................DONE
+
+
 -> Testing of the truss2d
 -> Incorporate PlaneStress into the framework
 -> Change the variables in truss according to the framework
