@@ -490,18 +490,29 @@ int main(){
     }
     //nlopt and shit
 
-    nlopt::opt(NLOPT_LD_SLSQP, d0.size());
+    // nlopt::opt(NLOPT_LD_SLSQP, d0.size());
     /*
     set_min_objective
     add_equality_constraint
     */
-    void nlopt::opt::set_min_objective(nlopt::vfunc objectfunc, NULL);
-    void nlopt::opt::add_equality_constraint(nlopt::vfunc constraint_eqn, NULL);
-    void nlopt::opt::set_ftol_rel(1e-10);
-    void nlopt::opt::set_maxeval(2000);
+    // void nlopt::opt::set_min_objective(nlopt::vfunc objectfunc, NULL);
+    // void nlopt::opt::add_equality_constraint(nlopt::vfunc constraint_eqn, NULL);
+    // void nlopt::opt::set_ftol_rel(1e-10);
+    // void nlopt::opt::set_maxeval(2000);
+
     vector<double> d, Fr;
-    //optimize
-    double fval::nlopt::opt::last_optimum_value() const;
+    double fval;
+    for(int i = 0; i < d0.size(); i++){
+        d.push_back(d0[i][0]);
+    }
+
+    nlopt_opt opt;
+    opt = nlopt_create(NLOPT_LD_SLSQP, d0.size());
+    nlopt_set_min_objective(opt, objectfunc, NULL);
+    nlopt_add_equality_constraint(opt, constraint_eqn, &constraint_data, 1e-10);
+    nlopt_set_ftol_rel(opt, 1e-10);
+    nlopt_set_maxeval(opt, 2000);
+    nlopt_optimize(opt, d, fval);
 
     for(int i = nmemb+2*nnode-ns; i < d.size(), i++){
         Fr.push_back(d[i]);
@@ -555,13 +566,13 @@ int main(){
 
 
 /*
--> Constiturel: Almost done, ending needs to be added
+-> Constiturel: Almost done, ending needs to be added..........................................DONE
 -> Model, SteelModel...........................................................................NOT NEEDED
 -> Check the functioning of dot(MatMul)........................................................DONE
 -> Objectfunc: grad[i] needs to be done .......................................................DONE
--> getMatrixA and getMatrixF: Needs to be visited again
+-> getMatrixA and getMatrixF: Needs to be visited again........................................DONE
 -> NLOpt: Need to check the functioning and documentation(Vamsi is working on it)..............DONE
--> NLOpt: opt.optimize is remaining
+-> NLOpt: opt.optimize is remaining............................................................DONE
 -> Printing of the output .....................................................................DONE
 
 
